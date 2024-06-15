@@ -145,7 +145,7 @@ void callback(const char * topic, byte * payload, unsigned int length) {
 void reportState(const char* pumpState, const int waterTarget, const float remainingWater, const char* message){
   outputDoc["state"]["reported"]["pumpState"] = pumpState;
   outputDoc["state"]["reported"]["waterTarget"] = waterTarget;
-  outputDoc["state"]["reported"]["waterTarget"] = remainingWater;
+  outputDoc["state"]["reported"]["remainingWater"] = remainingWater;
   outputDoc["state"]["reported"]["message"] = message;
   serializeJson(outputDoc, outputBuffer);
   mqttManager->publish(outputBuffer);
