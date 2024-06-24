@@ -1,0 +1,1 @@
+SELECT to_iso8601(from_unixtime(timestamp,'America/La_Paz')) AS date, thingName, dispensedWater, remainingWater FROM water_dispenser_data_store
