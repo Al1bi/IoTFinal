@@ -48,3 +48,18 @@ void WiFiController::autoConnect(){
   setUpCredentials();
   showIpAddress();
 }
+
+void WiFiController::addParameter(WiFiManagerParameter* parameter){
+  wiFiManager.addParameter(parameter);
+}
+
+void WiFiController::startPortal(){
+  if (!wiFiManager.startConfigPortal("ReconfigParameters")) {
+    Serial.println("failed to connect and hit timeout");
+    delay(3000);
+
+    ESP.restart();
+    delay(5000);
+  }
+}
+

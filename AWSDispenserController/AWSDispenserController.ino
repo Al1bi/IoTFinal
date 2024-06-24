@@ -6,6 +6,8 @@
 #include "MQTTManager.h"
 #include "Dispenser.h"
 
+#define PIN_BUTTON 34
+
 const char * MQTT_BROKER_HOST = "a2dmh18tmfqz8b-ats.iot.us-east-2.amazonaws.com";
 const int MQTT_BROKER_PORT = 8883;
 
@@ -90,6 +92,8 @@ NNGQXi/scxWTPR7zY+a11hzD/VTOG3zSOiloW8Td4Z5sDjq13ioGhqo=
 )KEY";
 
 WiFiController* wiFiController;
+WiFiManagerParameter weightGlassInput("weightGlass", "Enter the weight of the glass (10-200)", "20", 5, "type='number' min='10' max='400' step='10'");
+
 AmazonCredentials* amazonCredentials;
 MQTTConfig* mqttConfig;
 MQTTManager* mqttManager;
@@ -106,8 +110,9 @@ Dispenser* dispenser = new Dispenser(cupWeightSensor, tankWeightSensor, waterPum
 char outputBuffer[128];
 
 bool dispense = false;
-float glassWeight = 20;
+float weightGlass = 20;
 float waterTarget = 0;
+bool buttonPressed = false;
 
 void callback(const char * topic, byte * payload, unsigned int length) {
   String message;
@@ -156,6 +161,7 @@ void setup() {
 
   wiFiController = new WiFiController();
   wiFiController->autoConnect();
+  wiFiController->addParameter(&weightGlassInput);
 
   amazonCredentials = new AmazonCredentials(ROOT_CA1, CERTIFICATE, PRIVATE_KEY);
   mqttConfig = new MQTTConfig(MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_CLIENT_ID, UPDATE_DELTA_TOPIC, UPDATE_TOPIC, amazonCredentials);
@@ -185,7 +191,7 @@ void loop() {
         reportState("dispense", waterTarget, weightInTank, "no glass");
       }
 
-      float mlInTheGlass = weight - glassWeight;
+      float mlInTheGlass = weight - weightGlass;
       if(dispense) Serial.println(mlInTheGlass);
 
       if(dispense && mlInTheGlass >= waterTarget){
@@ -204,5 +210,25 @@ void loop() {
     Serial.println("Restarting...");
     ESP.restart();
   }  
+
+
+  //refactorizar
+  if (digitalRead(PIN_BUTTON) == LOW) {
+    delay(50);
+    if (digitalRead(PIN_BUTTON) == LOW) {
+      buttonPressed = true;
+    }
+  }
+
+  if (buttonPressed) {
+    buttonPressed = false;
+    wiFiController->startPortal();
+
+    Serial.print("Weight of the Glass: ");
+    Serial.println(weightGlassInput.getValue());
+    weightGlass = atof(weightGlassInput.getValue());
+
+  }
+
 
 }

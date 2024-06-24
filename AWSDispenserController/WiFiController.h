@@ -21,6 +21,8 @@ public:
   ~WiFiController();
   void connect(); 
   void autoConnect();
+  void addParameter(WiFiManagerParameter* parameter);
+  void startPortal();
 };
 
 #endif

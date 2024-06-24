@@ -1,0 +1,16 @@
+{
+  "name": "dispenser",
+  "version": "1.0.0",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "ask-sdk-core": "^2.14.0",
+    "aws-sdk": "^2.1646.0"
+  }
+}
